@@ -1,11 +1,14 @@
-all: semaphone.o
-	gcc semaphone.o
+all: main.o steup.o
+	gcc main.o
 
 run:
-	./a.out
+	./a.out $(args)
 
-semaphone.o:
-	gcc -c semphone.c
+main.o: main.c
+	gcc -c main.c
+
+setup.o: setup.c
+	gcc -c setup.c
 
 clean:
 	rm ./a.out
