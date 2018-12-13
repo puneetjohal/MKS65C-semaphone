@@ -6,7 +6,6 @@
 #include <fcntl.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <sys/sem.h>
 #include <unistd.h>
 
 int * create()
@@ -17,8 +16,6 @@ int * create()
   key_t key = ftok("./telephone.game", 'R');
   int got = shmget(key, sizeof(int), 0644 | IPC_CREAT);
   int *ptr = shmat(got, 0, 0);
-  semget(0xDABDAB, 1, IPC_CREAT);
-  
   return ptr;
 }
 void remove()
