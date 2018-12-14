@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 int main(){
+  /*
   //setup stuff
 
   //display the last line added to the file
@@ -23,6 +24,6 @@ int main(){
   update();
   //releasing the semaphore
   release();
-
+  */
   return 0;
 }
