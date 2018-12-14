@@ -24,9 +24,10 @@ void create()
   int r;
   int v;
   int thing = open("./telephone.game", O_CREAT | O_TRUNC, 0666); //making file
-  key_t key = ftok("./telephone.game", 'R');
-  int got = shmget(key, sizeof(int), 0644 | IPC_CREAT); //make shared memory
+  //key_t key = ftok("./telephone.game", 'R');
+  int got = shmget(KEY, sizeof(int), 0644 | IPC_CREAT); //make shared memory
   int *ptr = shmat(got, 0, 0);
+  *ptr = 0;
   int semd = semget(KEY, 1, IPC_CREAT | IPC_EXCL | 0644); //semd is the semaphore descriptor (make semaphore)
   if (semd == -1)
     printf("error %d: %s\n", errno, strerror(errno));
@@ -43,8 +44,8 @@ void flag_remove()
 {
   int r;
   int thing = open("./telephone.game", O_RDONLY, 0666);
-  key_t key = ftok("./telephone.game", 'R');
-  int got = shmget(key, sizeof(int), 0644 | IPC_CREAT);
+  //key_t key = ftok("./telephone.game", 'R');
+  int got = shmget(KEY, sizeof(int), 0644 | IPC_CREAT);
   shmctl(got, IPC_RMID, NULL); //remove shared memory
   int semd = semget(KEY, 1, 0644); //semd is the semaphore descriptor
   union semun us;
@@ -53,10 +54,15 @@ void flag_remove()
   read(thing, story, 300000 * sizeof(char));
   remove("./telephone.game");
   printf("%s\n", story);
+  free(story);
 }
 void view()
 {
-
+  int thing = open("./telephone.game", O_RDONLY, 0666);
+  char *story = malloc(300000 * sizeof(char));
+  read(thing, story, 300000 * sizeof(char));
+  printf("%s\n", story);
+  free(story);
 }
 int main(int argc, char *argv[])
 {
