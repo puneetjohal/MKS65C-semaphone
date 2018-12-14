@@ -27,12 +27,12 @@ void display_last_line()
   char *story = malloc(300000 * sizeof(char));
   int got = shmget(KEY, sizeof(int), 0644 | IPC_CREAT); 
   int *ptr = shmat(got, 0, 0);
-  lseek(thing, *ptr, SEEK_END);
+  int offset = *ptr * -1 * sizeof(char) - 1;
+  int err = lseek(thing, offset, SEEK_END);
   read(thing, story, *ptr);
   close(thing);
   printf("%s\n", story);
   free(story);
-  //perror("ERROR");
 }
 char * prompt()
 {
@@ -46,8 +46,10 @@ char * prompt()
 void write_line(char * line)
 {
   int thing = open("./telephone.game", O_WRONLY | O_APPEND, 0666);
-  write(thing, line, 1024 * sizeof(char));
-  close(thing);
+  char * space;
+  *space = ' ';
+  strncat(line, space, 1);
+  write(thing, line, strlen(line) * sizeof(char));
   //perror("Error");
 }
 void update(int len)
@@ -56,8 +58,9 @@ void update(int len)
   int *ptr = shmat(got, 0, 0);
   *ptr = len;
 }
-void release(){}
-int main(){
+
+int main()
+{
   int semd = semget(KEY, 1, 0);
   struct sembuf *sb;
   sb->sem_op = -1;
@@ -75,11 +78,11 @@ int main(){
   //updating the shared memory with the size of the last line
   update(len);
   //releasing the semaphore
-  release();
   free(line);
   sb->sem_op = 1;
   sb->sem_num = 0;
   sb->sem_flg = IPC_NOWAIT;
   semop(semd, sb, 1);
+  printf("Thank you for playing semaphone.\n");
   return 0;
 }
