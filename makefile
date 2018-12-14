@@ -1,12 +1,21 @@
-all: semaphone.o
-	gcc semaphone.o
+all: main.o setup.out
+	gcc main.o
 
-run:
+run: a.out
 	./a.out
 
-semaphone.o:
-	gcc -c semphone.c
+setup: setup.out
+	./setup.out $(args)
+
+setup.out: setup.o
+	gcc -o setup.out setup.o
+
+main.o: main.c
+	gcc -c main.c
+
+setup.o: setup.c
+	gcc -c setup.c
 
 clean:
-	rm ./a.out
+	rm *.out
 	rm *.o
